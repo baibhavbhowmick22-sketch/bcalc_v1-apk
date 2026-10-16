@@ -1,3 +1,4 @@
+
 name: Build Android APK
 
 on:
@@ -24,6 +25,7 @@ jobs:
             build-essential \
             git \
             python3-pip \
+            python3-dev \
             autoconf \
             libtool \
             pkg-config \
@@ -32,14 +34,23 @@ jobs:
             libncursesw5-dev \
             libtinfo5 \
             libffi-dev \
-            libssl-dev
+            libssl-dev \
+            zip \
+            unzip \
+            ant \
+            openjdk-17-jdk
+
+    - name: Install Buildozer and Cython
+      run: |
+        pip install --upgrade pip
+        pip install --user cython==0.29.36
+        pip install --user buildozer
+
+    - name: Add local bin to PATH
+      run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
     - name: Build with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1
-      id: buildozer
-      with:
-        command: buildozer -v android debug
-        buildozer_version: master
+      run: buildozer -v android debug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
